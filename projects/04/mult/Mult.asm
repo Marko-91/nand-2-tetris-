@@ -10,3 +10,33 @@
 // R0 >= 0, R1 >= 0, and R0*R1 < 32768.
 
 // Put your code here.
+@n
+M=1 // n=0
+@R2
+M=0 // sum=0
+
+(LOOP)
+//while(n < R1) {
+//  sum = sum + R0
+//}
+@n
+D=M
+@R1
+D=D-M //n-R1
+@END
+D;JGT //n-R1<0 continue in loop else jump to end
+
+@R0
+D=M
+@R2
+D=D+M
+M=D //sum = sum + R0
+
+@n
+M=M+1 //n++
+@LOOP
+0;JMP
+
+(END)
+@END
+0;JMP // infinite loop
