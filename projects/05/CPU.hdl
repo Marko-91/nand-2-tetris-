@@ -39,5 +39,37 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-    // Put your code here:
+    //Determine type of instruction
+    And(a=instruction[15], b=true, out=isInstructionC);
+    Not(in=isInstructionC, out=isInstructionA);
+
+    //(C-Instruction & Write to A register) ? Choose ALU out : Choose instruction from ROM
+    And(a=isInstructionC, b=instruction[5], out=writeToA); // If some important result is to be storted in the register A (for further computation)
+    Mux16(a=instruction, b=clockedAluOut, sel=writeToA, out=currentCommand);
+    
+    Or(a=isInstructionA, b=writeToA, out=loadIntoA); // should we commit to A?
+    ARegister(in=currentCommand, load=loadIntoA, out=outA, out[0..14]=addressM); // side effect always select RAM[command]
+
+    And(a=isInstructionC, b=instruction[12], out=isMemoryInstruction);
+    Mux16(a=outA, b=inM, sel=isMemoryInstruction, out=y);
+
+    And(a=isInstructionC, b=instruction[3], out=writeM); // if C-Instruction & assert M dest bit, write to RAM
+    ALU(x=dOut, y=y, 
+    zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], 
+    out=outM, out=clockedAluOut, zr=outZero, ng=outNeg);
+   
+    And(a=isInstructionC, b=instruction[4], out=loadD); // if C-Instruction and loc bit asserted
+    DRegister(in=clockedAluOut, load=loadD, out=dOut);
+
+    And(a=outZero, b=instruction[1], out=jeq);    // is zero and jump if zero
+    And(a=outNeg, b=instruction[2], out=jlt);    // is neg and jump if neg
+    Or(a=outZero, b=outNeg, out=zeroOrNeg);
+    Not(in=zeroOrNeg, out=positive);            // is positive (not zero and not neg)
+    And(a=positive, b=instruction[0], out=jgt); // is pos and jump if pos
+    Or(a=jeq, b=jlt, out=jle);
+    Or(a=jle, b=jgt, out=jumpToA);              // load PC if cond met and jump if cond
+    And(a=isInstructionC, b=jumpToA, out=PCload); // Only jump if C instruction
+    Not(in=PCload, out=PCinc);                  // only inc if not load
+    PC(in=outA, load=PCload, inc=PCinc, reset=reset, out[0..14]=pc);
+
 }
