@@ -17,7 +17,7 @@ public class HackAssembler {
         FileOutputStream fileOutputStream = new FileOutputStream(args[0].replaceAll("asm", "hack"));
         while(labelParser.hasMoreLines()) {
             labelParser.advance();
-            labelParser.symbol();
+            labelParser.parseLabels();
         }
         while(parser.hasMoreLines()) {
             StringBuilder binaryInstruction = new StringBuilder();

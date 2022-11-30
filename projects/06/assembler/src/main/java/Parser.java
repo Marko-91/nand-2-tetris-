@@ -56,11 +56,18 @@ public class Parser {
         } else {
             if (currentInstructionType == InstructionType.A_INSTRUCTION && currentInstruction.matches(A_INSTRUCTION_VARIABLE_MATCHER)) {
                 symbolTable.put(currentInstructionTrimmed, ++ramLoc);
-            } else if (currentInstructionType == InstructionType.L_INSTRUCTION) {
-                symbolTable.put(currentInstructionTrimmed, lineNumber + 1);
+                currentInstructionTrimmed = String.valueOf(symbolTable.get(currentInstructionTrimmed));
             }
         }
         return currentInstructionTrimmed;
+    }
+
+    public void parseLabels() {
+        String currentInstructionTrimmed = currentInstruction.replaceAll("(\\)|\\(|@)", "");
+        if (currentInstructionType == InstructionType.L_INSTRUCTION) {
+            symbolTable.put(currentInstructionTrimmed, lineNumber);
+        }
+
     }
 
     public String comp() {
