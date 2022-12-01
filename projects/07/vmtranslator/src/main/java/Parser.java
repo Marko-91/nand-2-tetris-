@@ -14,14 +14,17 @@ public class Parser {
     }
 
     public void advance() {
-
         currentInstruction = scanner.nextLine();
-        while(scanner.hasNextLine() && currentInstruction.isEmpty() || currentInstruction.startsWith("//")) {
+
+        while(scanner.hasNextLine() && currentInstruction.isEmpty() || currentInstruction.startsWith("//"))
             currentInstruction = scanner.nextLine();
-        }
-        currentInstruction = currentInstruction.replaceAll("//*.+", ""); // inline comments
-        currentInstruction = currentInstruction.trim().toLowerCase(Locale.ROOT);
-        commandType = commandType();
+        currentInstruction = currentInstruction.replaceAll("//*.+", "")
+                .trim().toLowerCase(Locale.ROOT); // inline comments
+        commandType = commandType(); // get current command type
+    }
+
+    public boolean hasMoreLines() {
+        return scanner.hasNextLine();
     }
 
     public CommandType commandType() {
@@ -32,7 +35,18 @@ public class Parser {
         } else if(currentInstruction.matches(ARITHMETIC_MATCHER)) {
             return CommandType.C_ARITHMETIC;
         }
-        return null;
+        throw new IllegalArgumentException("Unknown symbol " + currentInstruction);
+    }
+
+    public String arg1() {
+        if (commandType == CommandType.C_ARITHMETIC)
+            return currentInstruction;
+
+        return currentInstruction.split("\\s")[1];
+    }
+
+    public int arg2() {
+        return Integer.parseInt(currentInstruction.split("\\s")[2]);
     }
 
 }
