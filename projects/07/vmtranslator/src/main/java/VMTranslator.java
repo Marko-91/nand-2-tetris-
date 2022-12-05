@@ -22,6 +22,9 @@ public class VMTranslator {
                 case C_ARITHMETIC:
                     codeWriter.writeArithmetic(parser.arg1());
                     break;
+                case C_LABEL:
+                    codeWriter.writeLabel(parser.arg1());
+                    break;
 
             }
 

@@ -127,6 +127,39 @@ public class CodeWriter {
         write(asmCommand + "\n");
     }
 
+    public void writeLabel(String label) {
+        String asmCommand = "";
+        write(String.format("//label %s\n", label));
+        asmCommand += "(" + label + ")\n";
+        write(asmCommand + "\n");
+    }
+
+    public void writeGoto(String label) {
+        String asmCommand = "";
+        write(String.format("//goto %s\n", label));
+        asmCommand += "@" + label + ")\n" +
+                "0;JMP\n";
+
+        write(asmCommand + "\n");
+    }
+
+    /**
+     * Pops the value from the stack and see if val != 0, if so jump to label in code
+     * @param label the label inside the current function scope
+     */
+    public void writeIf(String label) {
+        String asmCommand = "";
+        write(String.format("//goto %s\n", label));
+        asmCommand +=  "@SP\n" +
+                "M=M-1\n" +
+                "A=M\n" +
+                "D=M\n" +
+                "@" + label + ")\n" +
+                "D;JNE\n";
+
+        write(asmCommand + "\n");
+    }
+
     public void endProgram() {
         write("(INFINITE_LOOP)\n" +
                 "@INFINITE_LOOP\n" +

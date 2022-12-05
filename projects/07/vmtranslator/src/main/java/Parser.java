@@ -34,10 +34,16 @@ public class Parser {
             return CommandType.C_POP;
         } else if(currentInstruction.matches(ARITHMETIC_MATCHER)) {
             return CommandType.C_ARITHMETIC;
+        } else if(currentInstruction.contains("label")) {
+            return CommandType.C_LABEL;
         }
         throw new IllegalArgumentException("Unknown symbol " + currentInstruction);
     }
 
+    /**
+     * Parses and returns the second string in the command
+     * @return argument 2 in the code, example: label test -> test
+     */
     public String arg1() {
         if (commandType == CommandType.C_ARITHMETIC)
             return currentInstruction;
