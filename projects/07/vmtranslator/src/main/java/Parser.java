@@ -36,6 +36,10 @@ public class Parser {
             return CommandType.C_ARITHMETIC;
         } else if(currentInstruction.contains("label")) {
             return CommandType.C_LABEL;
+        } else if(currentInstruction.contains("if-goto")) {
+            return CommandType.C_IF;
+        } else if(currentInstruction.contains("goto")) {
+            return CommandType.C_GOTO;
         }
         throw new IllegalArgumentException("Unknown symbol " + currentInstruction);
     }
