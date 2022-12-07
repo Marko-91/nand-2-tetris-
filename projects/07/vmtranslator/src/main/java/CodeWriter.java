@@ -198,13 +198,13 @@ public class CodeWriter {
 
         asmCommand += "(" + prefixFunctionName(functionName) + ")\n" +
                 "@" + nVars + "\n" +
-                "D=A" +
-                "@R14" +
-                "M=D" +
+                "D=A\n" +
+                "@R14\n" +
+                "M=D\n" +
                 "(LOOP_" + prefixFunctionName(functionName) + ")\n" + //name collision (LOOP) ?
                 "@R14\n" +
                 "D=M\n" +
-                "@END\n" +
+                "@END_LOOP_" + prefixFunctionName(functionName) + "\n" + //name collision (LOOP) ?
                 "D;JLE\n" +
                 "@0\n" +
                 "D=A\n" +
@@ -212,15 +212,17 @@ public class CodeWriter {
                 "@R14\n" +
                 "M=M-1 //n--\n" +
                 "@LOOP_" + prefixFunctionName(functionName) + "\n" + //name collision (LOOP) ?
-                "0;JMP\n";
+                "0;JMP\n" +
+                "(END_LOOP_" + prefixFunctionName(functionName) + ")\n"; //name collision (LOOP) ?
 
-        write(asmCommand + "\n");
+
+                write(asmCommand + "\n");
     }
 
 
     public void writeReturn() {
         String asmCommand = "";
-        write("//return");
+        write("//return\n");
 
         asmCommand += "@LCL\n" +
                 "D=M\n" +
@@ -249,6 +251,7 @@ public class CodeWriter {
                 restoreFrameSegmentToCaller(4, "LCL") +
                 "@R14\n" +
                 "A=M\n" +
+                "A=M\n" +
                 "0;JMP\n"; //return to the caller
 
 
@@ -266,6 +269,8 @@ public class CodeWriter {
                 "D=A\n" +
                 "@R13\n" +
                 "D=M-D\n" +
+                "A=D\n" +
+                "D=M\n" +
                 "@" + segment + "\n" +
                 "M=D\n"; // segment = *(frame - index)
     }
