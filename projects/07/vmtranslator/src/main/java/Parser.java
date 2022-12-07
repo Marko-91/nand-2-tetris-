@@ -40,6 +40,12 @@ public class Parser {
             return CommandType.C_IF;
         } else if(currentInstruction.contains("goto")) {
             return CommandType.C_GOTO;
+        } else if (currentInstruction.matches("call .+ \\d+$")) {
+            return CommandType.C_CALL;
+        } else if (currentInstruction.matches("function .+ \\d+$")) {
+            return CommandType.C_FUNCTION;
+        } else if (currentInstruction.equalsIgnoreCase("return")) {
+            return CommandType.C_RETURN;
         }
         throw new IllegalArgumentException("Unknown symbol " + currentInstruction);
     }
