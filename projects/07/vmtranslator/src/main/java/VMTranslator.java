@@ -15,6 +15,7 @@ public class VMTranslator {
         }
 
         File f = new File(args[0]);
+        CodeWriter codeWriter = null;
 
         if (f.isDirectory()) {
             FileOutputStream fileOutputStream = new FileOutputStream(f.getAbsolutePath() + File.separator + "source.asm");
@@ -23,7 +24,7 @@ public class VMTranslator {
                 if (fileLocal.getName().contains(".vm")) {
 
                     Parser parser = new Parser(new Scanner(fileLocal));
-                    CodeWriter codeWriter =
+                    codeWriter =
                             new CodeWriter(fileOutputStream, "Source");
                     if (!wroteBootstrap) {
                         codeWriter.writeBootstrap();
@@ -36,7 +37,7 @@ public class VMTranslator {
             if (args[0].contains(".vm")) { // determine if it's a single file input
 
                 Parser parser = new Parser(new Scanner(new File(args[0])));
-                CodeWriter codeWriter = new CodeWriter(
+                codeWriter = new CodeWriter(
                         new FileOutputStream(args[0].replaceAll("vm$", "asm")),
                         parseFileName(args[0]));
                 advance(parser, codeWriter);
@@ -47,7 +48,8 @@ public class VMTranslator {
             }
         }
 
-
+        //end program
+        codeWriter.endProgram();
     }
 
     private static String parseFileName(String fullName) {
@@ -98,8 +100,7 @@ public class VMTranslator {
 
 
         }
-        //end program
-        codeWriter.endProgram();
+
     }
 
 

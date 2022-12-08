@@ -76,7 +76,7 @@ public class CodeWriter {
                 asmCommand += generatePush("5", index);
                 break;
             case "static":
-                asmCommand += "@" + fileName + "." + index;
+                asmCommand += "@" + fileName + "." + index + "\n";
                 asmCommand += generatePush("16", index);
                 break;
             case "constant":
@@ -110,7 +110,7 @@ public class CodeWriter {
                 asmCommand += generatePop("5", index);
                 break;
             case "static":
-                asmCommand += "@" + fileName + "." + index;
+                asmCommand += "@" + fileName + "." + index + "\n";
                 asmCommand += generatePop("16", index);
                 break;
             case "constant":
