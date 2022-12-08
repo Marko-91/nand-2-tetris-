@@ -1,5 +1,4 @@
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
@@ -77,6 +76,7 @@ public class CodeWriter {
                 asmCommand += generatePush("5", index);
                 break;
             case "static":
+                asmCommand += "@" + fileName + "." + index;
                 asmCommand += generatePush("16", index);
                 break;
             case "constant":
@@ -110,6 +110,7 @@ public class CodeWriter {
                 asmCommand += generatePop("5", index);
                 break;
             case "static":
+                asmCommand += "@" + fileName + "." + index;
                 asmCommand += generatePop("16", index);
                 break;
             case "constant":
@@ -258,10 +259,21 @@ public class CodeWriter {
         write(asmCommand + "\n");
     }
 
+    public void writeBootstrap() {
+        write("// custom bootstrap code \n");
+        String asmCommand = "@256\n" +
+                "D=A\n" +
+                "@SP\n" +
+                "M=D\n";
+
+        write(asmCommand);
+        writeCall("sys.init", 0);
+    }
+
     public void endProgram() {
         write("(INFINITE_LOOP)\n" +
                 "@INFINITE_LOOP\n" +
-                "0;JMP ");
+                "0;JMP\n");
     }
 
     private String restoreFrameSegmentToCaller(int index, String segment) {
@@ -396,7 +408,7 @@ public class CodeWriter {
     }
 
     private String prefixFunctionName(String functionName) {
-        return fileName + "." + functionName;
+         return functionName;
     }
 
     private String prefixLabels(String label) {
